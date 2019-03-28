@@ -1,12 +1,16 @@
 node{
-     stage('Scm Checkout'){  
-        git credentialsId: 'github-cred', url: 'https://github.com/vijaytayde123/my-app' 
-     }
-      stage('Mvn Package'){
-	   sh label: '', script: 'mvn compile'
-	 }
-      stage('SonarQube Analysis') {
+   stage('SCM Checkout'){
+     git 'https://github.com/vijaytayde123/my-app'
+   }
+   stage('Compile-Package'){
+      // Get maven home path
+      def mvnHome =  tool name: 'maven-3', type: 'maven'   
+      sh "${mvnHome}/bin/mvn package"
+   }
+   
+   stage('SonarQube Analysis') {
+        def mvnHome =  tool name: 'maven-3', type: 'maven'
         withSonarQubeEnv('SonarQube') { 
-		   sh "/bin/mvn sonar:sonar"
-        } 
-}
+          sh "${mvnHome}/bin/mvn sonar:sonar"
+        }
+    }
